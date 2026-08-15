@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+<link rel="shortcut icon"  href="{{ url_for('static', filename='avatar2.png') }}"
+      type="image/png"
+      id="avatar" />    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaTrix.chat - AI Assistant</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+body {
+  background: radial-gradient(circle at top, #05070f, #000);
+  color: #00eaff;
+}
+
+.fatrix-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  text-align: center;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+
+  /* Glow effect */
+  text-shadow:
+    0 0 8px #00eaff,
+    0 0 16px #00eaff,
+    0 0 32px #0077ff;
+
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+.avatar {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  box-shadow:
+    0 0 10px #00eaff,
+    0 0 20px #0077ff;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 8px #00eaff,
+      0 0 16px #00eaff,
+      0 0 32px #0077ff;
+  }
+  50% {
+    text-shadow:
+      0 0 14px #00ffff,
+      0 0 28px #00eaff,
+      0 0 50px #00aaff;
+  }
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+ /* Background topics */
+        .background-topics {
+
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity : 0.2;
+        }
+
+        .topic {
+            font-weight: bold;
+            position: absolute;
+            font-size: 24px;
+            color: white;
+            animation: float 20s infinite linear;
+        }
+
+        .topic:nth-child(1) { top: 30%; left: 5%; animation-delay: 0s; }
+        .topic:nth-child(2) { top: 20%; left: 80%; animation-delay: 2s; }
+        .topic:nth-child(3) { top: 40%; left: 15%; animation-delay: 4s; }
+        .topic:nth-child(4) { top: 60%; left: 70%; animation-delay: 6s; }
+        .topic:nth-child(5) { top: 80%; left: 25%; animation-delay: 8s; }
+        .topic:nth-child(6) { top: 30%; left: 80%; animation-delay: 10s; }
+        .topic:nth-child(7) { top: 70%; left: 10%; animation-delay: 12s; }
+        .topic:nth-child(8) { top: 90%; left: 85%; animation-delay: 14s; }
+
+@keyframes butterflyFloat {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(15px, -25px) scale(1.05);
+    }
+    50% {
+        transform: translate(25px, 10px) scale(1);
+    }
+    75% {
+        transform: translate(-10px, 20px) scale(0.95);
+    }
+}
+
+.topic {
+    animation: butterflyFloat 30s infinite cubic-bezier(0.42, 0, 0.58, 1);
+    filter: blur(0.5px);
+    transition: all 0.3s ease;
+}
+
+.topic:hover {
+    filter: blur(0);
+    opacity: 0.5 !important;
+
+}
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            height: 90vh;
+            max-height: 700px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+
+        .header {
+            background: linear-gradient(135deg, #0084ff 0%, #00c6ff 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        #chatbox {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 18px;
+            max-width: 85%;
+            word-wrap: break-word;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-in;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user {
+            background: #0084ff;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,132,255,0.3);
+        }
+
+        .bot {
+            background: white;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .message-time {
+            font-size: 10px;
+            opacity: 0.6;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .input-container {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        #userInput:focus {
+            border-color: #0084ff;
+            box-shadow: 0 0 0 3px rgba(0,132,255,0.1);
+        }
+
+        #sendButton {
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 25px;
+            border: none;
+            background: linear-gradient(135deg, #0084ff 0%, #00c6ff 100%);
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 80px;
+        }
+
+        #sendButton:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,132,255,0.4);
+        }
+
+        #sendButton:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #sendButton:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+            max-width: 120px;
+            color: #666;
+            font-style: italic;
+            border: 1px solid #e9ecef;
+            align-self: flex-start;
+        }
+
+        .typing-dots {
+            display: inline-block;
+        }
+
+        .typing-dots span {
+            animation: typing 1.4s infinite;
+            display: inline-block;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { opacity: 0.3; }
+            30% { opacity: 1; }
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin: 10px 0;
+            padding: 10px;
+        }
+
+        /* Scrollbar styling */
+        #chatbox::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chatbox::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #chatbox::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        #chatbox::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* ========== MOBILE SPECIFIC STYLES ========== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+
+            .container {
+                width: 100%;
+                height: 100vh;
+                max-height: none;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .header {
+                padding: 15px 20px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            #chatbox {
+                padding: 15px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .message {
+                max-width: 90%;
+                font-size: 15px;
+            }
+
+            .input-container {
+                padding: 12px 15px;
+            }
+
+            #userInput {
+                padding: 14px 16px;
+                font-size: 16px;
+            }
+
+            #sendButton {
+                padding: 14px 20px;
+                min-width: 70px;
+            }
+
+            /* Hide background topics on mobile for better performance */
+            .background-topics {
+                display: none;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 360px) {
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .header p {
+                font-size: 13px;
+            }
+
+            .message {
+                max-width: 95%;
+                padding: 10px 14px;
+            }
+
+            .input-container {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+        }
+
+        /* Safe area for notch phones */
+        @supports(padding: max(0px)) {
+            @media (max-width: 768px) {
+                .container {
+                    padding-left: max(0px, env(safe-area-inset-left));
+                    padding-right: max(0px, env(safe-area-inset-right));
+                    padding-bottom: max(0px, env(safe-area-inset-bottom));
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-topics">
+        <div class="topic">🤖 Robotics</div>
+        <div class="topic">🏥 Medicine</div>
+        <div class="topic">💻 Technology</div>
+        <div class="topic">🧠 AI</div>
+        <div class="topic">📚 Learning</div>
+        <div class="topic">😊 Emotions</div>
+        <div class="topic">💡 Ideas</div>
+        <div class="topic">🌟 Support</div>
+        <dive class="topic">📚😊IDDL</dive>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="fatrix-title">
+  <img src="{{ url_for('static', filename='avatar2.png') }}" alt="FaTrix Avatar" class="avatar">
+  <span>FaTrix.chat</span>
+</h1>
+            <p>Your Personal AI Assistant</p>
+        </div>
+
+        <div id="chatbox">
+            <div class="welcome-message">
+                Welcome to FaTrix.chat - Your AI Assistant
+            </div>
+        </div>
+
+        <div id="typingIndicator" class="typing-indicator">
+            AFA is typing<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="userInput" placeholder="Type your message here..." autofocus />
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+
+    <script>
+        const chatbox = document.getElementById("chatbox");
+        const userInput = document.getElementById("userInput");
+        const sendButton = document.getElementById("sendButton");
+
+        function appendMessage(text, sender) {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `message ${sender}`;
+            msgDiv.textContent = text;
+            chatbox.appendChild(msgDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+
+            appendMessage(message, "user");
+            userInput.value = "";
+            sendButton.disabled = true;
+
+            try {
+                // Get bot response
+                const response = await fetch("/get_response", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+                appendMessage(data.response, "bot");
+
+            } catch (error) {
+                appendMessage("Sorry, connection error", "bot");
+            } finally {
+                sendButton.disabled = false;
+                userInput.focus();
+            }
+        }
+
+        userInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendMessage();
+        });
+
+
+        // Welcome message
+        setTimeout(() => {
+            appendMessage("Hello! I'm FaTrix.chat, your AI assistant. How can I help you today?", "bot");
+        }, 500);
+    </script>
+</body>
+</html>

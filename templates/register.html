@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Register - FaTrix.chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
+    <style>
+        /* Reset & base */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            height: 100vh;
+            background: radial-gradient(circle at top, #05070f, #000);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            color: #00eaff;
+            overflow: hidden;
+        }
+        /* Container with glassmorphism effect */
+        .container {
+            width: 380px;
+            background: rgba(10, 15, 30, 0.75);
+            border-radius: 25px;
+            padding: 40px 35px 45px 35px;
+            box-shadow:
+                0 0 10px #00eaffaa,
+                0 0 40px #0077ffcc,
+                inset 0 0 50px #00aaff22;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 234, 255, 0.3);
+            animation: pulseGlow 3s ease-in-out infinite;
+            position: relative;
+        }
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow:
+                    0 0 15px #00eaffaa,
+                    0 0 50px #0077ffcc,
+                    inset 0 0 60px #00aaff33;
+            }
+            50% {
+                box-shadow:
+                    0 0 25px #00ffffbb,
+                    0 0 70px #00aaffdd,
+                    inset 0 0 80px #00caff55;
+            }
+        }
+        h2 {
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 2.4rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow:
+                0 0 6px #00eaff,
+                0 0 12px #00aaff;
+        }
+        input {
+            width: 100%;
+            padding: 15px 18px;
+            margin: 12px 0;
+            border-radius: 30px;
+            border: 2px solid #00eaff;
+            background: rgba(0, 0, 0, 0.25);
+            color: #00eaff;
+            font-size: 16px;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 8px #00aaff33;
+        }
+        input::placeholder {
+            color: #66f2ffaa;
+            font-style: italic;
+        }
+        input:focus {
+            border-color: #00ffff;
+            box-shadow:
+                0 0 12px #00ffff,
+                inset 0 0 12px #00caffaa;
+            background: rgba(0, 255, 255, 0.1);
+        }
+        button {
+            width: 100%;
+            padding: 16px;
+            margin-top: 22px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, #0084ff, #00c6ff);
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow:
+                0 4px 15px rgba(0, 198, 255, 0.7);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            user-select: none;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 6px 25px rgba(0, 230, 255, 0.9);
+            background: linear-gradient(135deg, #00dfff, #00aaff);
+        }
+        .error {
+            color: #ff4d4d;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-shadow: 0 0 5px #ff3b3baa;
+        }
+        a {
+            color: #00c6ff;
+            text-decoration: none;
+            font-size: 15px;
+            margin-top: 15px;
+            display: inline-block;
+            transition: color 0.25s ease;
+            user-select: none;
+        }
+        a:hover {
+            color: #00ffff;
+            text-decoration: underline;
+        }
+        .footer-text {
+            margin-top: 25px;
+            font-size: 12px;
+            color: #00bfffcc;
+            opacity: 0.7;
+            letter-spacing: 1px;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Register</h2>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        {% if message %}
+            <div class="error" style="color:#00ffff; text-shadow: 0 0 10px #00ffff;">{{ message }}</div>
+        {% endif %}
+
+        <form method="POST" autocomplete="off">
+            <input type="text" name="username" placeholder="Username" required autofocus />
+            <input type="password" name="password" placeholder="Password" required />
+            <input type="password" name="confirm" placeholder="Confirm Password" required />
+            <button type="submit">Create Account</button>
+        </form>
+
+        <a href="{{ url_for('login') }}">Already have an account? Login</a>
+
+        <div class="footer-text">
+            Secure AI Access • FaTrix.chat
+        </div>
+    </div>
+</body>
+</html>
